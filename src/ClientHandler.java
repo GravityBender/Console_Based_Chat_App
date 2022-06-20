@@ -41,19 +41,19 @@ public class ClientHandler implements Runnable {
 
             }
         }
+    }
 
-        @Override
-        public void run () {
-            String msgFromClient;
+    @Override
+    public void run(){
+        String msgFromClient;
 
-            while (socket.isConnected()) {
-                try {
-                    msgFromClient = bufferedReader.readLine();
-                    broadcastMessage(msgFromClient);
-                } catch (IOException e) {
-                    closeLeaks(socket, bufferedReader, bufferedWriter);
-                    break;
-                }
+        while (socket.isConnected()) {
+            try {
+                msgFromClient = bufferedReader.readLine();
+                broadcastMessage(msgFromClient);
+            } catch (IOException e) {
+                closeLeaks(socket, bufferedReader, bufferedWriter);
+                break;
             }
         }
     }
