@@ -10,9 +10,9 @@ public class Server {
         this.serverSocket = serverSocket;
     }
 
-    public void startServer(){
-        try{
-            while (!serverSocket.isClosed()){
+    public void startServer() {
+        try {
+            while (!serverSocket.isClosed()) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client has connected!");
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
@@ -20,17 +20,17 @@ public class Server {
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             }
-        } catch (IOException e){
+        } catch (IOException e) {
 
         }
     }
 
-    public void closeServer(){
-        try{
-            if (serverSocket!=null){
+    public void closeServer() {
+        try {
+            if (serverSocket != null) {
                 serverSocket.close();
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
