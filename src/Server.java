@@ -21,7 +21,7 @@ public class Server {
                 thread.start();
             }
         } catch (IOException e) {
-
+            closeServer();
         }
     }
 
@@ -33,6 +33,12 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(6666);
+        Server server = new Server(serverSocket);
+        server.startServer();
     }
 
 }

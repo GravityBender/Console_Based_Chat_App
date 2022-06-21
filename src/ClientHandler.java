@@ -1,10 +1,11 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler implements Runnable {
 
-    private static ArrayList<ClientHandler> clientArray;
+    private static List<ClientHandler> clientArray = new ArrayList<>();
     private Socket socket;
     private BufferedWriter bufferedWriter;
     private BufferedReader bufferedReader;
@@ -27,17 +28,17 @@ public class ClientHandler implements Runnable {
 
     private void closeLeaks(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
         removeClient();
-        try{
-            if(socket!=null){
+        try {
+            if (socket != null) {
                 socket.close();
             }
-            if(bufferedReader!=null){
+            if (bufferedReader != null) {
                 bufferedReader.close();
             }
-            if (bufferedWriter!=null){
+            if (bufferedWriter != null) {
                 bufferedWriter.close();
             }
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -45,10 +46,10 @@ public class ClientHandler implements Runnable {
     private void broadcastMessage(String msg) {
         for (ClientHandler clients : clientArray) {
             try {
-                if (!clients.getUsername().equals(this.username)){
-                    bufferedWriter.write(msg);
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
+                if (!clients.getUsername().equals(username)) {
+                    clients.getBufferedWriter().write(msg);
+                    clients.getBufferedWriter().newLine();
+                    clients.getBufferedWriter().flush();
                 }
             } catch (IOException ioException) {
                 closeLeaks(socket, bufferedReader, bufferedWriter);
@@ -57,7 +58,7 @@ public class ClientHandler implements Runnable {
     }
 
     @Override
-    public void run(){
+    public void run() {
         String msgFromClient;
 
         while (socket.isConnected()) {
@@ -71,13 +72,16 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void removeClient(){
+    private void removeClient() {
         clientArray.remove(this);
-        broadcastMessage("Server: "+ this.username + " has left the chat");
+        broadcastMessage("Server: " + this.username + " has left the chat");
     }
 
     public String getUsername() {
         return username;
     }
 
+    public BufferedWriter getBufferedWriter() {
+        return bufferedWriter;
+    }
 }
