@@ -26,19 +26,32 @@ public class ClientHandler implements Runnable {
     }
 
     private void closeLeaks(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
-        socket.close();
-        bufferedReader.close();
-        bufferedWriter.close();
+        removeClient();
+        try{
+            if(socket!=null){
+                socket.close();
+            }
+            if(bufferedReader!=null){
+                bufferedReader.close();
+            }
+            if (bufferedWriter!=null){
+                bufferedWriter.close();
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     private void broadcastMessage(String msg) {
         for (ClientHandler clients : clientArray) {
             try {
                 if (!clients.getUsername().equals(this.username)){
-
+                    bufferedWriter.write(msg);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
                 }
-            } catch (IOException) {
-
+            } catch (IOException ioException) {
+                closeLeaks(socket, bufferedReader, bufferedWriter);
             }
         }
     }
@@ -58,35 +71,13 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
-
-    public BufferedWriter getBufferedWriter() {
-        return bufferedWriter;
-    }
-
-    public void setBufferedWriter(BufferedWriter bufferedWriter) {
-        this.bufferedWriter = bufferedWriter;
-    }
-
-    public BufferedReader getBufferedReader() {
-        return bufferedReader;
-    }
-
-    public void setBufferedReader(BufferedReader bufferedReader) {
-        this.bufferedReader = bufferedReader;
+    private void removeClient(){
+        clientArray.remove(this);
+        broadcastMessage("Server: "+ this.username + " has left the chat");
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 }
